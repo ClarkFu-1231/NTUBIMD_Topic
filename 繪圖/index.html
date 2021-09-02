@@ -21,23 +21,23 @@
           </div>
           <div>
             <div class="item">
-              <input type="checkbox" id="close" >
+              <input type="checkbox" id="close" checked>
               <label for="close">Close Price</label>
             </div>
             <div class="item">
               <input type="checkbox" id="moving-average" checked>
-              <label for="moving-average">Moving Average (50 Periods)</label>
+              <label for="moving-average">10-Moving Average (10 Periods)</label>
             </div>
             <div class="item">
-              <input type="checkbox" id="bollinger-bands">
-              <label for="bollinger-bands">Bollinger Bands (20 Periods)(布林通道)</label>
+              <input type="checkbox" id="moving-average" >
+              <label for="moving-average">30-Moving Average (30 Periods)</label>
             </div>
             <div class="item">
-              <input type="checkbox" id="ohlc">
-              <label for="ohlc">OHLC(美國線)</label>
+              <input type="checkbox" id="moving-average" >
+              <label for="moving-average">50-Moving Average (50 Periods)</label>
             </div>
             <div class="item">
-              <input type="checkbox" id="candlesticks" checked>
+              <input type="checkbox" id="candlesticks" >
               <label for="candlesticks">Candlesticks(K線圖)</label>
             </div>
           </div>
@@ -46,8 +46,6 @@
         </div>
       </div>
       <script src="chart.js"></script>
-      <script>
-      chart = new HistoricalPriceChart();
-      </script>
+      
 </body>
 </html>
