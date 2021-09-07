@@ -1,196 +1,180 @@
-const path =[{value:"1Y",loaddata:"./DATASET/2330.TW1Y.csv"},{value:"6M",loaddata:"./DATASET/2330.TW6M.csv"}]
+var margin = {top: 20, right: 50, bottom: 30, left: 50},
+            width = 960 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
 
-function drawchart(){
-d3.csv(path[0].loaddata).then(function(prices){
-    const months = {0 : 'Jan', 1 : 'Feb', 2 : 'Mar', 3 : 'Apr', 4 : 'May', 5 : 'Jun', 6 : 'Jul', 7 : 'Aug', 8 : 'Sep', 9 : 'Oct', 10 : 'Nov', 11 : 'Dec'}
-    const dateFormat = d3.timeParse("%Y-%m-%d");
-    for (var i =0;i< prices.length; i++){
-        prices[i]['Date'] = dateFormat(prices[i]['Date'])
+var parseDate = d3.timeParse("%Y-%m-%d");
+
+var x = techan.scale.financetime()
+        .range([0, width]);
+var crosshairY = d3.scaleLinear()
+        .range([height, 0]);
+
+var y = d3.scaleLinear()
+        .range([height - 60, 0]);
+
+var yVolume = d3.scaleLinear()
+        .range([height , height - 60]);
+
+
+var sma0 = techan.plot.sma()
+        .xScale(x)
+        .yScale(y);
+
+var sma1 = techan.plot.sma()
+        .xScale(x)
+        .yScale(y);
+var ema2 = techan.plot.ema()
+        .xScale(x)
+        .yScale(y);
+var candlestick = techan.plot.candlestick()
+        .xScale(x)
+        .yScale(y);
+
+
+var volume = techan.plot.volume()
+        .accessor(candlestick.accessor())
+        .xScale(x)
+        .yScale(yVolume);
+var xAxis = d3.axisBottom()
+        .scale(x);
+
+var yAxis = d3.axisLeft()
+        .scale(y);
+var volumeAxis = d3.axisRight(yVolume)
+        .ticks(3)
+        .tickFormat(d3.format(",.3s"));
+var ohlcAnnotation = techan.plot.axisannotation()
+        .axis(yAxis)
+        .orient('left')
+        .format(d3.format(',.2f'));
+var timeAnnotation = techan.plot.axisannotation()
+        .axis(xAxis)
+        .orient('bottom')
+        .format(d3.timeFormat('%Y-%m-%d'))
+        .translate([0, height]);
+
+var crosshair = techan.plot.crosshair()
+        .xScale(x)
+        .yScale(crosshairY)
+        .xAnnotation(timeAnnotation)
+        .yAnnotation(ohlcAnnotation)
+
+        .on("move", move);
+var textSvg = d3.select("#chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var svgText = textSvg.append("g")
+            .attr("class", "description")
+            .append("text")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "start")
+            .text("");
+
+var svg = d3.select("#chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var dataArr;
+
+const cb_candlestick = document.querySelector("input[id=candlestick]");
+const cb_ma10 = document.querySelector("input[id=ma10]");
+const cb_ma30 = document.querySelector("input[id=ma30]");
+const cb_ma50 = document.querySelector("input[id=ma50]");
+
+loaddata = "./DATASET/2330.TW6M.csv"
+d3.csv(loaddata, function(error, data) {
+
+        var accessor = candlestick.accessor();
+    
+        //設定資料的讀取格式，把csv轉成key: value的格式
+        data = data.map(function(d) {
+            return {
+                date: parseDate(d.Date), //日期
+                open: +d.Open,   //開盤
+                high: +d.High,   //最高點
+                low: +d.Low,     //最低點
+                close: +d.Close, //收盤
+                volume: +d.Volume//成交量
+            };
+        }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
+    
+        svg.append("g")
+                .attr("class", "candlestick");
+        svg.append("g")
+                .attr("class", "sma ma-0");
+        svg.append("g")
+                .attr("class", "sma ma-1");
+        svg.append("g")
+                .attr("class", "ema ma-2");
+        svg.append("g")
+                .attr("class", "volume");
+        svg.append("g")
+                .attr("class", "volume axis");
+        
+        svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")");
+
+        svg.append("g")
+                .attr("class", "y axis")
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Price ($)");
+        
+        
+        // Data to display initially
+        draw(data.slice(0, data.length));
+        draw_candlestick(data.slice(0, data.length));
+        ma_10(data.slice(0, data.length));
+        ma_30(data.slice(0, data.length));
+        ma_50(data.slice(0, data.length));
+        
+        
+   
+});
+
+function draw(data) {
+//   console.log(data); 
+    x.domain(data.map(candlestick.accessor().d));
+    y.domain(techan.scale.plot.ohlc(data, candlestick.accessor()).domain());
+    dataArr = data;
+    
+    svg.selectAll("g.x.axis").call(xAxis.ticks(7).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height));
+    svg.selectAll("g.y.axis").call(yAxis.ticks(10).tickSize(-width, -width));
+    yVolume.domain(techan.scale.plot.volume(data).domain());
+    var volumeData = data.map(function(d){return d.volume;});
+    svg.append("g")
+        .attr("class", "crosshair")
+        .call(crosshair)
+    
+    svg.select("g.volume").datum(data)
+        .call(volume);
+    
+    svg.select("g.volume.axis").call(volumeAxis);
+
+}
+function draw_candlestick(data){
+        var state = svg.selectAll("g.candlestick").datum(data);
+        state.call(candlestick);
+};
+function ma_10(data){svg.select("g.sma.ma-0").datum(techan.indicator.sma().period(10)(data)).call(sma0);};
+function ma_30(data){svg.select("g.sma.ma-1").datum(techan.indicator.sma().period(30)(data)).call(sma0);};
+function ma_50(data){svg.select("g.ema.ma-2").datum(techan.indicator.sma().period(50)(data)).call(sma0);};
+
+function move(coords) {
+    var i;
+    for (i = 0; i < dataArr.length; i ++) {
+        if (coords.x === dataArr[i].date) {
+            svgText.text(d3.timeFormat("%Y/%m/%d")(coords.x) + ", 開盤：" + dataArr[i].open + ", 高：" + dataArr[i].high + ", 低："+ dataArr[i].low + ", 收盤："+ dataArr[i].close  + ", 成交量： " + dataArr[i].volume );
+        }
     }
-    const margin = {top: 15, right: 65, bottom: 205, left: 50},
-                w = 1000 - margin.left - margin.right,
-                h = 625 - margin.top - margin.bottom;
-
-		var svg = d3.select("#chart")
-                    .append("svg")
-                    .attr("width", w + margin.left + margin.right)
-                    .attr("height", h + margin.top + margin.bottom)
-                    .append("g")
-                    .attr("transform", "translate(" +margin.left+ "," +margin.top+ ")");
-
-		let dates = _.map(prices, 'Date');
-		
-		
-		var xScale = d3.scaleLinear().domain([-1, dates.length]).range([0, w])
-		let xBand = d3.scaleBand().domain(d3.range(-1, dates.length)).range([0, w]).padding(0.3)
-		var xAxis = d3.axisBottom().scale(xScale).tickFormat(function(d) {
-									  d = dates[d]
-										return  months[d.getMonth()] + ' ' + d.getFullYear()
-									});
-		
-		svg.append("rect")
-					.attr("id","rect")
-					.attr("width", w)
-					.attr("height", h)
-					.style("fill", "none")
-					.style("pointer-events", "all")
-		
-		var gX = svg.append("g")
-					.attr("class", "axis x-axis") //Assign "axis" class
-					.attr("transform", "translate(0," + h + ")")
-					.call(xAxis)
-		
-		gX.selectAll(".tick text")
-		  .call(wrap, xBand.bandwidth())
-
-		var ymin = d3.min(prices.map(r => r.Low));
-		var ymax = d3.max(prices.map(r => r.High));
-		var yScale = d3.scaleLinear().domain([ymin, ymax]).range([h, 0]).nice();
-		var yAxis = d3.axisLeft()
-					  .scale(yScale)
-		
-		var gY = svg.append("g")
-					.attr("class", "axis y-axis")
-					.call(yAxis);
-		
-		var chartBody = svg.append("g")
-					.attr("class", "chartBody")
-					.attr("clip-path", "url(#clip)");
-		
-		// draw rectangles
-		let candles = chartBody.selectAll(".candle")
-		   .data(prices)
-		   .enter()
-		   .append("rect")
-		   .attr('x', (d, i) => xScale(i) - xBand.bandwidth())
-		   .attr("class", "candle")
-		   .attr('y', d => yScale(Math.max(d.Open, d.Close)))
-		   .attr('width', xBand.bandwidth())
-		   .attr('height', d => (d.Open === d.Close) ? 1 : yScale(Math.min(d.Open, d.Close))-yScale(Math.max(d.Open, d.Close)))
-		   .attr("fill", d => (d.Open === d.Close) ? "silver" : (d.Open > d.Close) ? "green" : "red")
-		
-		// draw high and low
-		let stems = chartBody.selectAll("g.line")
-		   .data(prices)
-		   .enter()
-		   .append("line")
-		   .attr("class", "stem")
-		   .attr("x1", (d, i) => xScale(i) - xBand.bandwidth()/2)
-		   .attr("x2", (d, i) => xScale(i) - xBand.bandwidth()/2)
-		   .attr("y1", d => yScale(d.High))
-		   .attr("y2", d => yScale(d.Low))
-		   .attr("stroke", d => (d.Open === d.Close) ? "white" : (d.Open > d.Close) ? "green" : "red");
-		
-		svg.append("defs")
-		   .append("clipPath")
-		   .attr("id", "clip")
-		   .append("rect")
-		   .attr("width", w)
-		   .attr("height", h)
-		
-		const extent = [[0, 0], [w, h]];
-		
-		var resizeTimer;
-		var zoom = d3.zoom()
-		  .scaleExtent([1, 100])
-		  .translateExtent(extent)
-		  .extent(extent)
-		  .on("zoom", zoomed)
-		  .on('zoom.end', zoomend);
-		
-		svg.call(zoom)
-
-		function zoomed() {
-			
-			var t = d3.event.transform;
-			let xScaleZ = t.rescaleX(xScale);
-			
-			let hideTicksWithoutLabel = function() {
-				d3.selectAll('.xAxis .tick text').each(function(d){
-					if(this.innerHTML === '') {
-					this.parentNode.style.display = 'none'
-					}
-				})
-			}
-
-			gX.call(
-				d3.axisBottom(xScaleZ).tickFormat((d, e, target) => {
-						if (d >= 0 && d <= dates.length-1) {
-					d = dates[d]
-					hours = d.getHours()
-					minutes = (d.getMinutes()<10?'0':'') + d.getMinutes() 
-					amPM = hours < 13 ? 'am' : 'pm'
-					return hours + ':' + minutes + amPM + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear()
-					}
-				})
-			)
-
-			candles.attr("x", (d, i) => xScaleZ(i) - (xBand.bandwidth()*t.k)/2)
-				   .attr("width", xBand.bandwidth()*t.k);
-			stems.attr("x1", (d, i) => xScaleZ(i) - xBand.bandwidth()/2 + xBand.bandwidth()*0.5);
-			stems.attr("x2", (d, i) => xScaleZ(i) - xBand.bandwidth()/2 + xBand.bandwidth()*0.5);
-
-			hideTicksWithoutLabel();
-
-			gX.selectAll(".tick text")
-			.call(wrap, xBand.bandwidth())
-
-		}
-
-		
-	});
 }
-function zoomend() {
-    var t = d3.event.transform;
-    let xScaleZ = t.rescaleX(xScale);
-    clearTimeout(resizeTimer)
-    resizeTimer = setTimeout(function() {
-
-    var xmin = new Date(xDateScale(Math.floor(xScaleZ.domain()[0])))
-        xmax = new Date(xDateScale(Math.floor(xScaleZ.domain()[1])))
-        filtered = _.filter(prices, d => ((d.Date >= xmin) && (d.Date <= xmax)))
-        minP = +d3.min(filtered, d => d.Low)
-        maxP = +d3.max(filtered, d => d.High)
-        buffer = Math.floor((maxP - minP) * 0.1)
-
-    yScale.domain([minP - buffer, maxP + buffer])
-    candles.transition()
-           .duration(800)
-           .attr("y", (d) => yScale(Math.max(d.Open, d.Close)))
-           .attr("height",  d => (d.Open === d.Close) ? 1 : yScale(Math.min(d.Open, d.Close))-yScale(Math.max(d.Open, d.Close)));
-           
-    stems.transition().duration(800)
-         .attr("y1", (d) => yScale(d.High))
-         .attr("y2", (d) => yScale(d.Low))
-    
-    gY.transition().duration(800).call(d3.axisLeft().scale(yScale));
-
-    }, 500)
-    
-}
-function wrap(text, width) {
-	text.each(function() {
-	  var text = d3.select(this),
-		  words = text.text().split(/\s+/).reverse(),
-		  word,
-		  line = [],
-		  lineNumber = 0,
-		  lineHeight = 1.1, // ems
-		  y = text.attr("y"),
-		  dy = parseFloat(text.attr("dy")),
-		  tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-	  while (word = words.pop()) {
-		line.push(word);
-		tspan.text(line.join(" "));
-		if (tspan.node().getComputedTextLength() > width) {
-		  line.pop();
-		  tspan.text(line.join(" "));
-		  line = [word];
-		  tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-		}
-	  }
-	});
-}
-
-drawchart();
-zoomend();

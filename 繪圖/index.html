@@ -1,52 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css" type="text/css" media="screen" charset="utf-8">
-    <link rel="stylesheet" href="stylesforweb.css" type="text/css" media="screen" charset="utf-8">
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
-    <title>線圖繪製</title>
-</head>
-<body>
-    <div class="flex-container">
-        <div class="flex-item">
-          <div>
-            <select id="select-stock">
-              <option value="TW1Y" selected>(1Y)台積電</option>
-              <option value="TW6M">(6M)台積電</option>
-            </select>
-          </div>
-          <div>
-            <div class="item">
-              <input type="checkbox" id="close" checked>
-              <label for="close">Close Price</label>
-            </div>
-            <div class="item">
-              <input type="checkbox" id="moving-average-10" checked>
-              <label for="moving-average">10-Moving Average (10 Periods)</label>
-            </div>
-            <div class="item">
-              <input type="checkbox" id="moving-average-30" >
-              <label for="moving-average">30-Moving Average (30 Periods)</label>
-            </div>
-            <div class="item">
-              <input type="checkbox" id="moving-average-50" >
-              <label for="moving-average">50-Moving Average (50 Periods)</label>
-            </div>
-            <div class="item">
-              <input type="checkbox" id="candlesticks" >
-              <label for="candlesticks">Candlesticks(K線圖)</label>
-            </div>
-          </div>
-        <div class="flex-item">
-          <div id="chart"></div>
+<meta charset="utf-8">
+
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <title>線圖</title>
+    </head>
+    <body>
+      <div>
+        <div class="item">
+          <input type="checkbox" id="close" >
+          <label for="close">Close Price</label>
         </div>
+        <div class="item">
+          <input type="checkbox" id="candlestick" >
+          <label for="candlestick">K線圖</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="ma10" >
+          <label for="moving-average">Moving Average - 10</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="ma30" >
+          <label for="moving-average">Moving Average - 30</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="ma50" >
+          <label for="moving-average">Moving Average -50</label>
+        </div>
+        
       </div>
-      <!--<script src="chart.js"></script>-->
-      <script src="chart1.js"></script>
-      <script>chart = new HistoricalPriceChart();</script>
-</body>
+      <div id=chart></div>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="techanjs.js"></script>
+    <script type="text/javascript" src="chart.js"></script>
+    </body>
 </html>
