@@ -8,6 +8,13 @@
     </head>
     <body>
       <div>
+        <select id="select-stock">
+          <!--<option selected="selected" value="TW1Y">台積電近一年股價</option>-->
+          <option value="TW6M">台積電近半年股價</option>
+        </select>
+      </div>
+      <div>
+      <div id="choosesection">
         <div class="item">
           <input type="checkbox" id="close" >
           <label for="close">Close Price</label>
@@ -30,7 +37,7 @@
         </div>
         
       </div>
-      <div id=chart></div>
+      <div id="chart"></div>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="techanjs.js"></script>
     <script type="text/javascript" src="chart.js"></script>
