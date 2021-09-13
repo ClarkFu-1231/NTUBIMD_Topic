@@ -82,7 +82,6 @@ var svg = d3.select("#chart").append("svg")
 
 var dataArr;
 
-const cb_close = document.querySelector("input[id=close]");
 const cb_candlestick = document.querySelector("input[id=candlestick]");
 const cb_ma10 = document.querySelector("input[id=ma10]");
 const cb_ma30 = document.querySelector("input[id=ma30]");
@@ -110,8 +109,6 @@ d3.csv(loaddata, function(error, data) {
         svg.append("g")
                 .attr("class", "candlestick");
         svg.append("g")
-                .attr("class", "close");
-        svg.append("g")
                 .attr("class", "sma ma-0");
         svg.append("g")
                 .attr("class", "sma ma-1");
@@ -138,17 +135,6 @@ d3.csv(loaddata, function(error, data) {
         
         // Data to display initially
         draw(data.slice(0, data.length));
-        
-        cb_close.addEventListener('change', function() {
-                if (this.checked) {
-                        
-                        console.log("Checkbox is checked..");
-                } else {
-                        console.log("Checkbox is not checked..");
-                        svg.select('.close').remove()
-                }
-              });
-
         cb_candlestick.addEventListener('change', function() {
                 if (this.checked) {
                         draw_candlestick(data.slice(0, data.length));
@@ -186,13 +172,6 @@ d3.csv(loaddata, function(error, data) {
                 }
         });
 
-        
-        
-        
-        
-        
-        
-   
 });
 
 function draw(data) {
@@ -215,9 +194,7 @@ function draw(data) {
     svg.select("g.volume.axis").call(volumeAxis);
 
 }
-function draw_close(data){
-        svg.selectAll("g.close").datum(data).call(close);
-};
+
 function draw_candlestick(data){
         var state = svg.selectAll("g.candlestick").datum(data);
         state.call(candlestick);
