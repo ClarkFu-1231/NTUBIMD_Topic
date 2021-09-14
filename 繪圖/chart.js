@@ -89,8 +89,8 @@ const cb_ma50 = document.querySelector("input[id=ma50]");
 
 
 
-loaddata = "./DATASET/2330.TW1Y.csv"
-d3.csv(loaddata, function(error, data) {
+loaddata='./DATASET/2330.json'
+d3.json(loaddata, function(error, data) {
 
         var accessor = candlestick.accessor();
     
