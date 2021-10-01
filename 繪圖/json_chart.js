@@ -60,7 +60,7 @@ var crosshair = techan.plot.crosshair()
         .yAnnotation(ohlcAnnotation)
 
         .on("move", move);
-var textSvg = d3.select("#chart").append("svg")
+var textSvg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", margin.top + margin.bottom)
         .append("g")
@@ -74,21 +74,16 @@ var svgText = textSvg.append("g")
             .style("text-anchor", "start")
             .text("");
 
-var svg = d3.select("#chart").append("svg")
+var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var dataArr;
-const cb_close = document.querySelector("input[id=close]");
-const cb_candlestick = document.querySelector("input[id=candlestick]");
-const cb_ma10 = document.querySelector("input[id=ma10]");
-const cb_ma30 = document.querySelector("input[id=ma30]");
-const cb_ma50 = document.querySelector("input[id=ma50]");
 
 //https://csvjson.com/ /*Csv to Json*/
-d3.json("./DATASET/test1.json", function(error, data) {
+d3.json("./DATASET/1102.json", function(error, data) {
         var accessor = candlestick.accessor();
         data = data.map(function(d) {
             return {
@@ -132,60 +127,10 @@ d3.json("./DATASET/test1.json", function(error, data) {
         
         // Data to display initially
         draw(data.slice(0, data.length));
-        
-        cb_close.addEventListener('change', function() {
-                if (this.checked) {
-                        
-                        console.log("Checkbox is checked..");
-                } else {
-                        console.log("Checkbox is not checked..");
-                        svg.select('.close').remove()
-                }
-              });
-
-        cb_candlestick.addEventListener('change', function() {
-                if (this.checked) {
-                        draw_candlestick(data.slice(0, data.length));
-                        console.log("Checkbox is checked..");
-                } else {
-                        console.log("Checkbox is not checked..");
-                        svg.select('.candlestick').remove()
-                }
-              });
-        cb_ma10.addEventListener('change', function() {
-                if (this.checked) {
-                        ma_10(data.slice(0, data.length));
-                        console.log("Checkbox is checked..");
-                } else {
-                        console.log("Checkbox is not checked..");
-                        svg.select('.ma-0').remove()
-                }
-        });
-        cb_ma30.addEventListener('change', function() {
-                if (this.checked) {
-                        ma_30(data.slice(0, data.length));
-                        console.log("Checkbox is checked..");
-                } else {
-                        console.log("Checkbox is not checked..");
-                        svg.select('.ma-1').remove()
-                }
-        });
-        cb_ma50.addEventListener('change', function() {
-                if (this.checked) {
-                        ma_50(data.slice(0, data.length));
-                        console.log("Checkbox is checked..");
-                } else {
-                        console.log("Checkbox is not checked..");
-                        svg.select('.ma-2').remove()
-                }
-        });
-
-        
-        
-        
-        
-        
-        
+        draw_candlestick(data.slice(0, data.length));
+        ma_10(data.slice(0, data.length));
+        ma_30(data.slice(0, data.length));
+        ma_50(data.slice(0, data.length));
    
 });
 
@@ -209,9 +154,7 @@ function draw(data) {
     svg.select("g.volume.axis").call(volumeAxis);
 
 }
-function draw_close(data){
-        svg.selectAll("g.close").datum(data).call(close);
-};
+
 function draw_candlestick(data){
         var state = svg.selectAll("g.candlestick").datum(data);
         state.call(candlestick);
