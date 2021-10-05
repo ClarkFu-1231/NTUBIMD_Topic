@@ -59,7 +59,7 @@ def stock_price(symbol):
     stock_price = []
     stock_price_touple=(market_date.get_text().strip()[-9:],stock_name.get_text().strip("加到投資組合"),opening_price.get_text().strip(),close_price.get_text().strip(),highest_price.get_text().strip(),lowest_price.get_text().strip(),lot.get_text().strip())
     stock_price.append(stock_price_touple)
-    stock_price_db(stock_price)
+    # stock_price_db(stock_price)
     print(stock_price)
     
     
