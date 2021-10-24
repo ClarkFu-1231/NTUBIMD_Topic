@@ -1,36 +1,122 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
+<html lang="en">
+<head>
+    <style>
+        body{
+            text-align: center;
+            background-color: #4E4F97;
+            color: white;
+        }
+        text {
+        fill: white;
+        }
 
-<html>
-    <head>
-        <link rel="stylesheet" href="style.css">
-        <title>線圖</title>
-    </head>
-    <body>
-      <div>
-      <!--<div id="choosesection">
-        <div class="item">
-          <input type="checkbox" id="candlestick" >
-          <label for="candlestick">K線圖</label>
-        </div>
-        <div class="item">
-          <input type="checkbox" id="ma10" >
-          <label for="moving-average">Moving Average - 10</label>
-        </div>
-        <div class="item">
-          <input type="checkbox" id="ma30" >
-          <label for="moving-average">Moving Average - 30</label>
-        </div>
-        <div class="item">
-          <input type="checkbox" id="ma50" >
-          <label for="moving-average">Moving Average -50</label>
-        </div>-->
+        path.candle {
+            stroke: #000000;
+            stroke-width: 3;
+        }
+
+        path.candle.body {
+            stroke-width: 0;
+        }
+
+        path.candle.down {
+            fill: #7BA23F;
+            stroke: #7BA23F;
+        }
+        path.candle.up {
+            fill: #DB4D6D;
+            stroke: #DB4D6D;
+        }
+        .ma-0 path.line {
+            stroke: #93d2ff;
+            opacity: 0.5;
+            fill: none;
+            stroke-width: 2;
+          }
+        .ma-1 path.line {
+            stroke: #ff8fda;
+            opacity: 0.5;
+            fill: none;
+            stroke-width: 2;
+          }
+        .ma-2 path.line {
+            stroke: #ff9437;
+            fill: none;
+            opacity: 0.5;
+            stroke-width: 2;
+          }
+
+        .axis {
+            font-size: 11px;
+        } 
+        .x.axis line {
+            stroke: rgb(99, 99, 99);
+        }
+        .y.axis line {
+            stroke: rgb(99, 99, 99);
+        }
+        .x.axis path {
+            stroke: #ffffff;
+        }
+        .y.axis path {
+            stroke: #ffffff;
+        }
+        .crosshair {
+            cursor: crosshair;
+        }
+
+        .crosshair path.wire {
+            stroke: #FFC408;
+            stroke-dasharray: 5, 5;
+        }
+
+        .crosshair .axisannotation path {
+            fill: #2b2b2b;
+        }
+        path.macd {
+        stroke: #91B493;
+        stroke-width: 2;
+        fill: none;
+        }
+
+        path.signal {
+        stroke: #8F77B5;
+        stroke-width: 2;
+        fill: none;
+        }
+
+        path.zero {
+            stroke: #828282;
+            stroke-width: 2;
+        }
+
+        path.difference {
+            fill: #787878;
+            opacity: 0.5;
+        }
+        rect.pane {
+            cursor: move;
+            fill: none;
+            pointer-events: all;
+        }
+
         
-      </div>
-      <div id="chart"></div>
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鯊科經理-繪圖表</title>
+</head>
+<body>
+    <h1>鯊科經理</h1>
+    <div class="btn-group">
+        <button class="button" onclick="drawMACD()">MACD</button>
+        <button class="button" onclick="drawVolume()">Volume</button>
+    </div>
+    <div id='chart'></div>
+    <script>datapath="./DATASET/23301Y.json"</script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="techanjs.js"></script>
-    <script type="text/javascript" src="json_chart.js"></script>
-
-    </body>
+    <script src="techan.js"></script>
+    <script type="text/javascript" src="drawiii.js"></script>
+</body>
 </html>
