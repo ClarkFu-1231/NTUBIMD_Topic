@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<html>
+    <head>
+      <style>
+      
+      text {
+          fill: rgb(255, 255, 255);
+        }
+      body{
+        background-color: #434343;
+        color: #FBE251;
+        text-align: center;
+        font: 20px sans-serif;
+
+        }
+      path {
+        stroke-width: 3;
+        fill: none;
+      }
+      .line1 {
+        stroke: #2EA9DF;
+        stroke-width: 2;
+      }
+      .line2 {
+        stroke: #E03C8A;
+        stroke-width: 2;
+      }
+      .axis {
+        font-size: 11px;
+        
+      }
+      
+      .x.axis line {
+        stroke: rgb(99, 99, 99);
+      }
+
+      .y.axis line {
+        stroke: rgb(99, 99, 99);
+      }
+      
+      .x.axis .minor {
+        stroke-opacity: .5;
+      }
+      
+      .x.axis path {
+        stroke: #ffffff;
+      }
+      
+       .y.axis path {
+        fill: none;
+        stroke: rgb(255, 255, 255);
+      }</style>
+        <title>KD線圖</title>
+    </head>
+    <body>
+      <div>KD線圖</div>
+      <div id="chart"></div>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script type="text/javascript" src="KD_chart.js"></script>
+    </body>
+</html>
