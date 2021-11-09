@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "linebot": "^1.6.1",
+    "query-string": "^7.0.1",
+    "querystring": "^0.2.1",
+    "request": "^2.88.2",
+    "url": "^0.11.0"
+  }
+}
